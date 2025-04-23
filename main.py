@@ -1,6 +1,5 @@
 import cv2
 import os
-import numpy as np
 
 def detect_license_plate(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
