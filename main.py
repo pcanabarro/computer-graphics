@@ -2,11 +2,15 @@ import cv2
 import os
 
 def detect_license_plate(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blur = cv2.bilateralFilter(gray, 11, 17, 17)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) # Gray scale
+    blur = cv2.bilateralFilter(gray, 11, 17, 17) # Reduce noise
     edges = cv2.Canny(blur, 30, 200)
+    # cv2.imshow('gray', gray)
+    # cv2.imshow('blur', blur)
+    # cv2.imshow('edges', edges)
+    # cv2.waitKey(1500)
     contours, _ = cv2.findContours(edges.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:10]
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:10] # Select only 10 biggest contours, normal images have a lot of noise
 
     for contour in contours:
         approx = cv2.approxPolyDP(contour, 10, True)
@@ -45,6 +49,8 @@ def process_dataset(input_folder="dataset", output_folder="output"):
 
         if bbox:
             focused = crop_and_resize(image, bbox)
+            # cv2.imshow('edges', focused)  
+            # cv2.waitKey(500)
             save_path = os.path.join(output_folder, file_name)
             cv2.imwrite(save_path, focused)
             processed += 1
